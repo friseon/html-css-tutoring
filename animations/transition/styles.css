@@ -1,0 +1,44 @@
+:root {
+    --neon-text-color: #08f;
+    --neon-border-color: #f40;
+}
+
+body {
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000;
+    min-height: 100vh;
+}
+
+h1 {
+    font-size: 50px;
+    font-weight: 200;
+    color: #fff;
+    padding: 40px;
+    border: 4px solid #fff;
+    border-radius: 12px;
+    text-transform: uppercase;
+    text-shadow:
+            -1px -1px 5px #fff,
+            1px 1px 5px #fff,
+            0 0 2px var(--neon-text-color),
+            0 0 10px var(--neon-text-color),
+            0 0 30px var(--neon-text-color),
+            0 0 40px var(--neon-text-color),
+            0 0 20px var(--neon-text-color);
+    box-shadow:
+            0 0 5px #fff,
+            inset 0 0 5px #fff,
+            0 0 20px var(--neon-border-color),
+            inset 0 0 20px var(--neon-border-color),
+            0 0 40px var(--neon-border-color),
+            inset 0 0 40px var(--neon-border-color);
+    transition: text-shadow .5s ease-in-out, box-shadow .5s ease-in-out;
+}
+
+h1:hover {
+    text-shadow: none;
+    box-shadow: none;
+}
