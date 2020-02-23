@@ -1,0 +1,86 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.map {
+    width: 2088px;
+    height: 1534px;
+    position: relative;
+    background-image: url(./map.jpg);
+    background-size: cover;
+    transform-origin: 0 0;
+}
+
+.draggable {
+    touch-action: none;
+    user-select: none;
+}
+
+.container {
+    border: 4px solid red;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.house {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+}
+
+.house_1 {
+    background-color: red;
+    top: 5%;
+    left: 5%;
+}
+
+.house_2 {
+    background-color: green;
+    top: 20%;
+    left: 20%;
+}
+
+.house_3 {
+    background-color: yellow;
+    top: 40%;
+    left: 20%;
+}
+
+.house_4 {
+    background-color: blue;
+    top: 20%;
+    left: 40%;
+}
+
+.house_5 {
+    background-color: black;
+    top: 40%;
+    left: 40%;
+}
+
+.house_6 {
+    background-color: magenta;
+    top: 0;
+    right: 0;
+}
+.house_7 {
+    background-color: magenta;
+    bottom: 0;
+    right: 0;
+}
+.house_8 {
+    background-color: magenta;
+    bottom: 0;
+    left: 0;
+}
+
+button {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background-color: #fff;
+    font-size: 24px;
+}
