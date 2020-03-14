@@ -1,51 +1,88 @@
-const state = {
+// описываем все элементы на странице
+const map = document.querySelector('.map');
+const container = document.querySelector('.container');
+const containerParams = container.getBoundingClientRect();
+const zoomButton = document.querySelector('.zoom');
+
+// состояние карты
+const mapState = {
+    // увеличение
     scale: 1,
-    position: {
+    // смещение
+    offset: {
         x: 0,
         y: 0
     }
 }
-const map = document.querySelector('.map');
-let mapParams = map.getBoundingClientRect();
-const container = document.querySelector('.container');
-const containerParams = container.getBoundingClientRect();
 
-const zoom = document.querySelector('button');
-
-const updatePosition = (diffScale) => {
+// обновление смещения в состоянии карты
+const updateStateOffset = () => {
+    // получение геометрических данных по карте (размеры, координаты)
+    const mapParams = map.getBoundingClientRect();
+    // во сколько меняется увелечиние на карта
+    // в 2 раза увеличиваем или в 2 раза уменьшаем
+    const zoomDiff = (mapState.scale === 2 ? 2 : .5);
     // TODO: зум должен быть к центру карты
-    // TODO: смещение не ограничено краями и карта может выпасть, не сможем еще перемещать
-    state.position.x = state.position.x * diffScale;
-    state.position.y = state.position.y * diffScale;
+    mapState.offset.x = Math.max(containerParams.width - mapParams.width * zoomDiff, mapState.offset.x * zoomDiff);
+    mapState.offset.y = Math.max(containerParams.height - mapParams.height * zoomDiff, mapState.offset.y * zoomDiff);
 };
+
+// обновление трансформации элемента
 const updateMapTransfrom = () => {
-    map.style.transform = `translate(${state.position.x}px, ${state.position.y}px) scale(${state.scale})`;
+    map.style.transform = `translate(${mapState.offset.x}px, ${mapState.offset.y}px) scale(${mapState.scale})`;
 }
 
-zoom.addEventListener('click', () => {
-    state.scale = state.scale === 1 ? 2 : 1;
-    updatePosition(state.scale === 2 ? 2 : .5);
-    updateMapTransfrom();
-    mapParams = map.getBoundingClientRect();
-});
-
-interact('.draggable').draggable({
-    listeners: {
-        start(event) {
-            //   console.log(event.type, event.target)
-        },
-        move(event) {
-            if (state.position.x + mapParams.width + event.dx <= containerParams.width
-                || state.position.x + event.dx >= 0
-                || state.position.y + mapParams.height + event.dy <= containerParams.height
-                || state.position.y + event.dy >= 0) {
-                return;
-            }
-
-            state.position.x += event.dx;
-            state.position.y += event.dy;
-
-            updateMapTransfrom();
-        },
+// переключение зума карты
+const toggleScale = () => {
+    if (mapState.scale === 1) {
+        // если текущий scale обычный, то делаем увеличение x2
+        mapState.scale = 2;
+    } else {
+        // если текущий scale отличен от обычного, то возвращаем обычный
+        mapState.scale =  1
     }
-})
+}
+
+// зумируем карту
+const zoomMap = async () => {
+    toggleScale();
+    updateStateOffset();
+    updateMapTransfrom();
+}
+
+zoomButton.addEventListener('click', zoomMap);
+
+interact('.draggable')
+    // двойной тап на карте зумирует её
+    .on('doubletap', zoomMap)
+    .draggable({
+        modifiers: [
+            // настройка границ, в которых мы можем двигать нашу карту
+            interact.modifiers.restrictEdges({
+                // насколько можем сдвинуть левый и верхний края в положительную сторону
+                inner: {
+                  left: 0,
+                  top: 0,
+                },
+                // насколько можем сдвинуть левый и верхний края в отрицательную сторону
+                outer: (x, y, mapElem) => {
+                    return {
+                        top: containerParams.height - mapElem.rect.height,
+                        left: containerParams.width - mapElem.rect.width
+                    };
+                },
+            })
+        ],
+        // включяем инерцию при передвижении по карте (плавность сдвига)
+        inertia: true,
+        // обработчики событий на карте при сдвиге
+        listeners: {
+            // процесс движения
+            move(event) {
+                mapState.offset.x += event.dx;
+                mapState.offset.y += event.dy;
+
+                updateMapTransfrom();
+            },
+        }
+    });
