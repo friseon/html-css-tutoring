@@ -1,3 +1,7 @@
+:root {
+    --control-panel-height: 78px;
+}
+
 html,
 body {
     margin: 0;
@@ -24,9 +28,10 @@ body {
 
 .container {
     width: 100%;
-    /* height: 100vh; */
     overflow: hidden;
-    height: calc(var(--vh, 1vh) * 100);
+    height: calc(100vh - 100px);
+    /* хак для починки багу с размерами на safari */
+    height: calc(var(--vh, 1vh) * 100 - var(--control-panel-height));
 }
 
 .house {
@@ -81,10 +86,14 @@ body {
     left: 0;
 }
 
-button {
-    position: fixed;
-    bottom: 0;
-    left: 0;
+.control-panel {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: var(--control-panel-height);
+}
+
+.zoom {
     background-color: #fff;
     font-size: 24px;
 }

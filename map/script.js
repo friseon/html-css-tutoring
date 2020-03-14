@@ -4,7 +4,17 @@ const container = document.querySelector('.container');
 const zoomButton = document.querySelector('.zoom');
 const test = document.querySelector('.test');
 
+// Высота панели управления. Нужно здесь задавать для расчета границ передвижения по карте
+const CONTROL_PANEL_HEIGHT = 78;
+
 let containerParams = container.getBoundingClientRect();
+
+window.addEventListener('resize', () => {
+    const vh = window.innerHeight * 0.01;
+
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+    containerParams = container.getBoundingClientRect();
+});
 
 document.addEventListener("DOMContentLoaded", () => {
     // хак для лечение проблемы в сафари с высотой контейнера
@@ -23,14 +33,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 // настройка границ, в которых мы можем двигать нашу карту
                 interact.modifiers.restrictEdges({
                     // насколько можем сдвинуть левый и верхний края в положительную сторону
+                    // какая-то фигня, если делать на весь экран, то требуется учитывать разницу
                     inner: {
-                      left: 0,
-                      top: 0,
+                        left: 0,
+                        top: CONTROL_PANEL_HEIGHT,
                     },
                     // насколько можем сдвинуть левый и верхний края в отрицательную сторону
                     outer: (x, y, mapElem) => {
                         return {
-                            top: containerParams.height - mapElem.rect.height,
+                            top: containerParams.height - mapElem.rect.height + CONTROL_PANEL_HEIGHT,
                             left: containerParams.width - mapElem.rect.width
                         };
                     },
@@ -44,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 move(event) {
                     mapState.offset.x += event.dx;
                     mapState.offset.y += event.dy;
-    
+
                     updateMapTransfrom();
                 },
             }
@@ -106,7 +117,7 @@ const toggleScale = () => {
         mapState.scale = 2;
     } else {
         // если текущий scale отличен от обычного, то возвращаем обычный
-        mapState.scale =  1
+        mapState.scale = 1
     }
 }
 
